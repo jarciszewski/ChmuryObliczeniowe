@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+
+  server:
+    build: ./server
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    volumes:
+      - logs:/project/logs
+      - ./server:/project
+      - /project/node_modules
+    networks:
+      - mern
+    restart: always
+
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/src:/project/src
+    stdin_open: true
+    networks:
+      - mern
+
+  mongo:
+    build: ./mongo
+    volumes:
+      - data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - mern
+
+networks:
+  mern:
+    driver: bridge
+
+volumes:
+  data:
+  logs:
